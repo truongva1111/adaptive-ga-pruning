@@ -61,7 +61,7 @@ pip install torch_pruning
 ### Usage
 
 ```bash
-jupyter notebook vgg16pruner.ipynb
+jupyter notebook adaptive-ga-pruning.ipynb
 ```
 
 The notebook includes:
