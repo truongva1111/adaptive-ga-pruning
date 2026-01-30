@@ -87,21 +87,9 @@ We optimize three objectives simultaneously:
 
 ## Citation
 
-> 📝 **Paper Status:** Under review
+> 📝 **Paper Status:** Under review at IJEECS
 
-If you find this work useful, please cite:
-
-```bibtex
-@article{vo2025adaptive,
-  title={Layer-wise Adaptive Structured Pruning via Genetic Algorithms with Taylor-based Proxy Fitness},
-  author={Vo, Anh-Truong and Vu, Duc-Lung},
-  journal={arXiv preprint},
-  year={2025},
-  note={Under review}
-}
-```
-
-*Citation will be updated once the paper is published.*
+*Citation will be provided once the paper is published.*
 
 ## License
 
