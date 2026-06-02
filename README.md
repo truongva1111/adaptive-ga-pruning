@@ -148,12 +148,64 @@ cd adaptive-ga-pruning
 jupyter notebook adaptive-ga-pruning.ipynb
 ```
 
-The notebook performs:
-1. **Pre-computation**: Compute Taylor importance scores once and cache them as ranking tables
-2. **GA Search (GA-SO / GA-MO)**: Evolve pruning policies in ~15 s on RTX 4090
-3. **Knee-Point Selection**: Pick the balanced architecture from the Pareto front (GA-MO only)
-4. **Physical pruning** using `torch_pruning`
-5. **Fine-tuning** for 150 epochs with Knowledge Distillation
+## Experimental Pipeline
+
+The pruning pipeline involves Taylor pre-computation, evolutionary search (GA-SO or NSGA-II), physical pruning, and fine-tuning. Detailed algorithm steps are available in the paper. Below are specific execution details regarding the code structure.
+
+### Notebook Cell Execution Map
+
+The interactive notebook (`adaptive-ga-pruning.ipynb`) is organized as follows:
+
+| Notebook Section | Purpose | Dependency |
+|---|---|---|
+| 1. Dependencies | Install/import packages | — |
+| 2. Setup VGG16 + Config + Common function | Load model, set hyperparameters | Section 1 |
+| 3. Training mô hình gốc (Baseline) | Train or load pre-trained VGG16 | Section 1-2 |
+| 4. Global pruning | Empirical analysis of global strategies (Min/Median/Max) | Section 1–3 |
+| **5. GAPruner** | Define GAPruner class (fitness evaluation, evolution) | Section 1–3 |
+| **5.1 Building Ranking Tables (Pre-computation)** | **Stage 1:** Taylor pre-computation | Section 5 |
+| **5.2. Starting GA Evolution** | **Stage 2 (GA-SO):** Single-objective search | Section 5.1 |
+| **5.3. Physical pruning GA Execution** | **Stage 3:** Apply GA-SO result | Section 5.2 |
+| **5.4. Finetune** | **Stage 4:** Fine-tune GA-SO model (Normal / KD) | Section 5.3 |
+| **6. NSGAPruner** | Define NSGAPruner class (multi-objective evolution) | Section 5 (GAPruner) |
+| **6.1. NSGA execution** | **Stage 2 (NSGA-II):** Multi-objective search | Section 6 |
+| **6.2. Physical pruning NSGA** | **Stage 3:** Apply NSGA-II knee point | Section 6.1 |
+| **6.3. Finetune** | **Stage 4:** Fine-tune NSGA-II model (Normal / KD) | Section 6.2 |
+
+> ⚠️ **Critical:** Section 6 (NSGA-II) depends on the `GAPruner` class in Section 5. You must run Cells 1–3 and first cells in Section 5 before jumping to Section 6.
+
+> [!WARNING]
+> **For Reproducers:** When experimenting with different models or datasets, please pay close attention to the `dataset_class`, checkpoint filenames, and `save_name` variables in the configuration. Ensure these are updated correctly to avoid mixing up checkpoints, ranking tables, and logs between different dataset/model combinations.
+
+### Standalone Script (ResNet-56)
+
+The `resnet56_ga_pruning_std.py` script runs the entire pipeline end-to-end with automatic checkpointing and resume support:
+
+```bash
+python resnet56_ga_pruning_std.py \
+    --dataset CIFAR10 \
+    --target_macs 0.30 \
+    --pop_size 50 \
+    --generations 30 \
+    --kd_epochs 150 \
+    --seed 42
+```
+
+The script outputs:
+- `checkpoint_resnet56/` — baseline, pruned architecture, and fine-tuned student checkpoints
+- `logs_resnet56/` — Pareto front JSON, knee point JSON, ranking tables (`.npz`), summary
+- `figures_resnet56/` — Pareto front plot, training curve
+
+### Physical Pruning (Stage 3)
+
+*Note: This stage is an engineering step between search and fine-tuning and is only described implicitly in the paper.*
+
+1. Decode the selected chromosome (GA-SO best or NSGA-II knee point) into per-layer channel counts and strategies.
+2. For each layer, calculate the number of filters to prune and determine their specific indices based on the selected strategy (Min-Importance or Median-Rank).
+3. Physically remove the selected filters. The implementation adapts to the architecture's complexity:
+   - **For VGG16 (Interactive Notebook):** Performs sequential, layer-by-layer manual filter and batch normalization slicing. This approach is lightweight and efficient for standard feed-forward architectures.
+   - **For ResNet (Standalone Script):** Utilizes [`torch_pruning`](https://github.com/VainF/Torch-Pruning) `DependencyGraph` to automatically propagate dimensional changes across residual skip connections and coupled layers. The script supports both `torch_pruning` v0.x (`get_pruning_plan`) and v1.x+ (`get_pruning_group`) APIs with an automatic fallback mechanism.
+4. The result is a **structurally smaller model** with reduced Conv2d dimensions — no masking or sparse tensors.
 
 ### Reproducing the 50-Run Statistics
 
