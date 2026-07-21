@@ -4,8 +4,9 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Paper](https://img.shields.io/badge/Paper-IJEECS%202026-brightgreen.svg)](#citation)
+[![DOI](https://img.shields.io/badge/DOI-10.11591%2Fijeecs.v43.i1.pp314--324-blue.svg)](https://doi.org/10.11591/ijeecs.v43.i1.pp314-324)
 
-Official implementation of **"Layer-wise Adaptive Structured Pruning via Genetic Algorithms with Taylor-based Proxy Fitness"** — accepted at *Indonesian Journal of Electrical Engineering and Computer Science (IJEECS), 2026*.
+Official implementation of **"Layer-wise Adaptive Structured Pruning via Genetic Algorithms with Taylor-based Proxy Fitness"** — published in *Indonesian Journal of Electrical Engineering and Computer Science (IJEECS)*, Vol. 43, No. 1, pp. 314-324, 2026 ([DOI: 10.11591/ijeecs.v43.i1.pp314-324](https://doi.org/10.11591/ijeecs.v43.i1.pp314-324)).
 
 ## Highlights
 
@@ -232,12 +233,17 @@ If you find this work useful, please cite:
   title   = {Layer-wise Adaptive Structured Pruning via Genetic Algorithms with Taylor-based Proxy Fitness},
   author  = {Vo, Anh-Truong and Tran, Hoang-Loc and Phan, Dinh-Duy and Vu, Duc-Lung},
   journal = {Indonesian Journal of Electrical Engineering and Computer Science (IJEECS)},
+  volume  = {43},
+  number  = {1},
+  pages   = {314--324},
   year    = {2026},
-  note    = {Accepted for publication}
+  doi     = {10.11591/ijeecs.v43.i1.pp314-324},
+  url     = {https://doi.org/10.11591/ijeecs.v43.i1.pp314-324}
 }
 ```
 
-*Volume/issue/page information will be updated once published.*
+**DOI:** [10.11591/ijeecs.v43.i1.pp314-324](https://doi.org/10.11591/ijeecs.v43.i1.pp314-324)  
+**URL:** [https://ijeecs.iaescore.com/index.php/IJEECS/article/view/45839](https://ijeecs.iaescore.com/index.php/IJEECS/article/view/45839)
 
 ## License
 
